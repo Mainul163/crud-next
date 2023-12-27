@@ -2,20 +2,36 @@
 
 import { useState } from "react";
 import "tailwindcss/tailwind.css";
+import UserTable from "./components/UserTable";
 export default function Home() {
   const [name, setName] = useState("");
 
   const [email, setEmail] = useState("");
 
   const [country, setCountry] = useState("");
-  const handleFromSubmit = (e) => {
+  const handleFromSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form data submitted:", name, email, country);
-    console.log("hlw");
+
+    await fetch("http://localhost:5000/employees", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ name: name, email: email, country: country }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    document.getElementById("SubmitForm").reset();
   };
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <form onSubmit={handleFromSubmit}>
+      <form onSubmit={handleFromSubmit} id="SubmitForm">
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -100,6 +116,7 @@ export default function Home() {
           </button>
         </div>
       </form>
+      <UserTable />
     </main>
   );
 }
